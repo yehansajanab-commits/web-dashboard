@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP Dashboard</title>
+  <script type="module">
+    // Import Firebase SDK (Modular v9+)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // 🔥 Your Firebase configuration (replace these with your own values)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBeSvzkqNQGNUjV-VZtzVLxc5L1zDR3koU",
+      authDomain: "automation-project-210552f.firebaseapp.com",
+      databaseURL: "https://automation-project-210552f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "automation-project-210552f",
+      storageBucket: "automation-project-210552f.firebasestorage.app",
+      messagingSenderId: "381276919893",
+      appId: "1:381276919893:web:82f43fdca819164d315cdc"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // --- Read ESP data live ---
+    const espRef = ref(db, "espData");
+    onValue(espRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        document.getElementById("temperature").textContent = data.temperature ?? "-";
+        document.getElementById("humidity").textContent = data.humidity ?? "-";
+        document.getElementById("status").textContent = "✅ Connected";
+      } else {
+        document.getElementById("status").textContent = "⚠️ No data";
+      }
+    });
+
+    // --- Send setpoint to Firebase ---
+    document.addEventListener("DOMContentLoaded", () => {
+      const setpointBtn = document.getElementById("setpointBtn");
+      setpointBtn.addEventListener("click", () => {
+        const val = document.getElementById("setpointInput").value;
+        set(ref(db, "setpoint"), Number(val));
+        alert("Setpoint updated to " + val);
+      });
+    });
+  </script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      background: #f4f7fa;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px 30px;
+      margin: 10px;
+      width: 300px;
+      text-align: center;
+    }
+    h1 { color: #2a6bf3; }
+    button {
+      background: #2a6bf3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>ESP32 Dashboard</h1>
+
+  <div class="card">
+    <h2>Status: <span id="status">Loading...</span></h2>
+    <p>🌡 Temperature: <strong id="temperature">--</strong> °C</p>
+    <p>💧 Humidity: <strong id="humidity">--</strong> %</p>
+  </div>
+
+  <div class="card">
+    <h3>Set Setpoint</h3>
+    <input id="setpointInput" type="number" placeholder="Enter value" />
+    <button id="setpointBtn">Send</button>
+  </div>
+</body>
+</html>
