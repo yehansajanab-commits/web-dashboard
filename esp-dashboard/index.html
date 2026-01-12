@@ -1,57 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Alarm Control Dashboard</title>
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-
-  <style>
-    body { background:#0f111a; color:#fff; font-family:Arial; text-align:center }
-    .box { border:1px solid #333; border-radius:10px; padding:20px; margin:15px }
-    button { padding:10px 20px; margin:5px; font-size:16px; cursor:pointer }
-    h2 { margin-bottom:10px }
-  </style>
+  <meta charset="UTF-8">
+  <title>Speaker Control Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-<h1>🚨 Alarm Control Dashboard</h1>
 
-<div id="devices"></div>
+  <h1>🔊 Speaker Control Dashboard</h1>
+  <p id="status">Connecting to MQTT...</p>
 
-<script>
-const broker = 'wss://test.mosquitto.org:1883/mqtt';
-const client = mqtt.connect(broker);
+  <div class="container">
+    <div class="speaker" data-id="1">
+      <h2>Speaker 1</h2>
+      <button class="play">PLAY</button>
+      <button class="stop">STOP</button>
+    </div>
 
-const alarms = [
-  { id: 1, name: "Alarm 1" },
-  { id: 2, name: "Alarm 2" },
-  { id: 3, name: "Alarm 3" },
-  { id: 4, name: "Alarm 4" }
-];
+    <div class="speaker" data-id="2">
+      <h2>Speaker 2</h2>
+      <button class="play">PLAY</button>
+      <button class="stop">STOP</button>
+    </div>
 
-client.on('connect', () => {
-  console.log("MQTT connected");
-});
+    <div class="speaker" data-id="3">
+      <h2>Speaker 3</h2>
+      <button class="play">PLAY</button>
+      <button class="stop">STOP</button>
+    </div>
 
-function send(alarmId, msg){
-  const topic = `speakers/${alarmId}/cmd`;
-  client.publish(topic, msg);
-  console.log(topic, msg);
-}
+    <div class="speaker" data-id="4">
+      <h2>Speaker 4</h2>
+      <button class="play">PLAY</button>
+      <button class="stop">STOP</button>
+    </div>
+  </div>
 
-const root = document.getElementById('devices');
-
-alarms.forEach(a=>{
-  const d = document.createElement('div');
-  d.className = 'box';
-  d.innerHTML = `
-    <h2>${a.name}</h2>
-    <button onclick="send(${a.id}, 'PLAY')">▶ PLAY</button>
-    <button onclick="send(${a.id}, 'STOP')">⏹ STOP</button>
-  `;
-  root.appendChild(d);
-});
-</script>
-
+  <!-- MQTT.js (browser version) -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
 
